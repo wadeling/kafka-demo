@@ -1,55 +1,21 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/Shopify/sarama"
 	"log"
 	"os"
 	"strings"
-	"time"
 )
 
 const (
-	Topic = "wade-test"
+	Topic    = "wade-test"
+	NodeNum  = 200
+	ImageNum = 100
 )
 
 var (
 	Brokers = []string{"localhost:9092"}
 )
-
-// NodeImage test msg struct
-type NodeImage struct {
-	Repo      string
-	Tag       string
-	Digest    string
-	CreatedAt int64
-	encoded   []byte
-	err       error
-}
-
-func (n *NodeImage) ensureEncoded() {
-	if n.err == nil && n.encoded == nil {
-		n.encoded, n.err = json.Marshal(n)
-	}
-}
-func (n *NodeImage) Length() int {
-	n.ensureEncoded()
-	return len(n.encoded)
-}
-func (n *NodeImage) Encode() ([]byte, error) {
-	n.ensureEncoded()
-	return n.encoded, n.err
-}
-
-func getMockMsg() NodeImage {
-	nodeImage := NodeImage{
-		Repo:      "index.docker.io/wade23",
-		Tag:       "test",
-		Digest:    "45a7d023456f582161e545cac6a07d9052d481cfb87dcc2b5c81b6e052dfd5d5",
-		CreatedAt: time.Now().UnixMicro(),
-	}
-	return nodeImage
-}
 
 func createTopic(brokerList []string) error {
 	config := sarama.NewConfig()

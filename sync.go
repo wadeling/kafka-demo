@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
+	"github.com/wadeling/kafka-demo/pkg/msg"
 	"log"
 	"sync"
 )
@@ -24,8 +25,8 @@ func syncSendMsg(brokerList []string) {
 	log.Printf("sync send,brokers:%v\n", brokerList)
 
 	wg := sync.WaitGroup{}
-	nodeNum := 2
-	imageNum := 2
+	nodeNum := NodeNum
+	imageNum := ImageNum
 	for i := 0; i < nodeNum; i++ {
 		wg.Add(1)
 		go func(index int) {
@@ -37,13 +38,13 @@ func syncSendMsg(brokerList []string) {
 				return
 			}
 
-			msg := getMockMsg()
+			tmsg := msg.GetMockMsg()
 			log.Printf("node %d start send kafka msg.", index)
 			for j := 0; j < imageNum; j++ {
 				partition, offset, err := producer.SendMessage(&sarama.ProducerMessage{
 					Topic: Topic,
 					Key:   sarama.StringEncoder(fmt.Sprintf("wade-sync-%d", index)),
-					Value: &msg,
+					Value: &tmsg,
 				})
 				if err != nil {
 					log.Printf("failed to send sync msg:%v", err)

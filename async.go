@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Shopify/sarama"
+	"github.com/wadeling/kafka-demo/pkg/msg"
 	"log"
 	"sync"
 	"time"
@@ -34,13 +35,13 @@ func asyncSendMsg(brokerList []string) {
 				return
 			}
 
-			msg := getMockMsg()
+			tmsg := msg.GetMockMsg()
 			log.Printf("node %d start send kafka msg.", index)
 			for j := 0; j < imageNum; j++ {
 				producer.Input() <- &sarama.ProducerMessage{
 					Topic: Topic,
 					Key:   sarama.StringEncoder(fmt.Sprintf("wade-%d", index)),
-					Value: &msg,
+					Value: &tmsg,
 				}
 			}
 
