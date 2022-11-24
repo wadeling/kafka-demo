@@ -22,14 +22,18 @@ type CustomMsg struct {
 func TestMsgSize(t *testing.T) {
 	t.Log("start")
 	now := time.Now().UnixMicro()
+	tmpData := ""
+	for i := 0; i < 40*1000; i++ {
+		tmpData = tmpData + "a"
+	}
 	nodeImage := msg.NodeImage{
 		Repo:      repoName,
 		Tag:       tag,
 		Digest:    digest,
 		CreatedAt: now,
-		Data:      "",
+		Data:      tmpData,
 	}
-	orgLen := len(repoName) + len(tag) + len(digest) + 8
+	orgLen := len(repoName) + len(tag) + len(digest) + len(tmpData) + 8
 	t.Logf("orglen %v", orgLen)
 
 	data, err := json.Marshal(nodeImage)
